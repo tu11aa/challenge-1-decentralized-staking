@@ -57,7 +57,7 @@ const Notification = ({
           {icon ? icon : ENUM_STATUSES[status]}
         </div>
         <div
-          className={`overflow-x-hidden break-words whitespace-pre-line ${
+          className={`max-h-[90vh] overflow-x-hidden break-words whitespace-pre-line ${
             icon ? "mt-1" : ""
           }`}
         >
