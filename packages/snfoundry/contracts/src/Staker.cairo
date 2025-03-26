@@ -101,7 +101,8 @@ pub mod Staker {
         // ToDo Checkpoint 3: Protect the function calling `not_completed` function before the
         // execution
         fn execute(ref self: ContractState) {
-            assert(self.not_completed(), 'Stack completed');
+            assert(self.not_completed(), 'Already executed');
+            assert(self.deadline() < get_block_timestamp(), 'Deadline not reached');
 
             // Check total ETH staked in this contract&#8203;:contentReference[oaicite:8]{index=8}.
             let total_staked = self.eth_token_dispatcher.read().balanceOf(get_contract_address());
@@ -118,9 +119,7 @@ pub mod Staker {
 
         // ToDo Checkpoint 3: Implement your `withdraw` function here
         fn withdraw(ref self: ContractState) {
-             if !self.open_for_withdraw.read() {
-                panic!("Withdrawals not available");
-            }
+            assert(self.open_for_withdraw(), 'Withdrawals not available');
 
             let caller = get_caller_address();
             let user_balance = self.balances(caller);
@@ -197,7 +196,7 @@ pub mod Staker {
         }
         // ToDo Checkpoint 3: Implement your not_completed function here
         fn not_completed(ref self: ContractState) -> bool {
-            return !self.completed() || get_block_timestamp() < self.deadline();
+            return !self.completed() && !self.executed.read();
         }
     }
 }
